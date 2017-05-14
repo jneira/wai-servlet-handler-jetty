@@ -151,9 +151,8 @@ createServer opts = do
 runJetty :: Options -> Wai.Application -> IO ()
 runJetty opts app = java $ do
   serv <- createServer opts
-  serv <.> (setHandler $ makeHandler app)
-  serv <.> start
-  
+  doto serv [setHandler $ makeHandler app, start]
+  return ()
 
  
   
