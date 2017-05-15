@@ -154,7 +154,10 @@ runJetty opts app = java $ do
   doto serv [setHandler $ makeHandler app, start]
   return ()
 
- 
+run :: Int -> Wai.Application -> IO()
+run port' app = do
+  let opts = defaultOptions { port = port' }
+  runJetty opts app 
   
 
 
