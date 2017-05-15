@@ -1,9 +1,12 @@
 {-# LANGUAGE MagicHash, TypeFamilies, DataKinds,
              FlexibleContexts, TypeOperators,
              MultiParamTypeClasses #-}
-module Network.Wai.Servlet.Handler.Jetty where
+module Network.Wai.Servlet.Handler.Jetty
+   ( Options(), defaultOptions, runJetty, run ) where
 import qualified Network.Wai          as Wai     
 import           Network.Wai.Servlet
+import           Data.Maybe (fromMaybe, isJust)
+import           Control.Monad (when)
 import           Java
 
 data {-# CLASS "org.eclipse.jetty.util.component.LifeCycle" #-}
@@ -76,7 +79,7 @@ foreign import java unsafe setHost ::
    (a <: AbstractNetworkConnector) => Maybe String -> Java a ()
 
 foreign import java unsafe setIdleTimeout ::
-   (a <: AbstractConnector) => Int -> Java a ()
+   (a <: AbstractConnector) => Int64 -> Java a ()
 
 data {-# CLASS "org.eclipse.jetty.server.HandlerWrapper" #-}
   HandlerWrapper = HandlerWrapper (Object# HandlerWrapper)
@@ -103,8 +106,15 @@ data {-# CLASS "org.eclipse.jetty.server.ConnectionFactory" #-}
   ConnectionFactory = ConnectionFactory (Object# ConnectionFactory)
   deriving Class
 
+data {-# CLASS "org.eclipse.jetty.server.HttpConnectionFactory" #-}
+  HttpConnectionFactory = HttpConnectionFactory
+     (Object# HttpConnectionFactory)
+  deriving Class
+
+type instance Inherits HttpConnectionFactory = '[ConnectionFactory]
+
 foreign import java unsafe "@new" httpConnectionFactory ::
-   HttpConfiguration -> ConnectionFactory
+   HttpConfiguration -> HttpConnectionFactory
 
 data {-# CLASS "org.eclipse.jetty.server.ConnectionFactory[]" #-}
   ConnectionFactoryArray = ConnectionFactoryArray
@@ -134,11 +144,14 @@ doto c = withObject c . sequence
 httpConnector :: Server -> Options -> Java a ServerConnector
 httpConnector serv opts = do
   let httpFact = httpConnectionFactory $ httpConfig opts
-  httpFactArr <- arrayFromList [httpFact]
+  httpFactArr <- arrayFromList [superCast httpFact]
   let servConn = serverConnector serv httpFactArr
-  doto servConn [setPort $ port opts,
-                 setHost $ host opts,
-                 setIdleTimeout $ idleTimeout opts]
+  withObject servConn $ do
+    setPort $ port opts
+    setIdleTimeout $ fromIntegral $ idleTimeout opts
+    let host'=host opts
+    when (isJust host') $ setHost host'
+    -- Error if we pass Nothing directly to setHost
   return servConn
 
 createServer :: Options -> Java a Server
