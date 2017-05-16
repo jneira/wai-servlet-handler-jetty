@@ -11,7 +11,11 @@ category:            Web
 build-type:          Simple
 extra-source-files:  ChangeLog.md, README.md
 cabal-version:       >=1.10
-
+source-repository this
+  type:              git
+  location:          https://github.com/jneira/wai-servlet-handler-jetty 
+  tag:               0.1.0.0 
+                     
 library
   exposed-modules:     Network.Wai.Servlet.Handler.Jetty
   -- other-modules:       
