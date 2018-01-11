@@ -1,5 +1,5 @@
 name:                wai-servlet-handler-jetty
-version:             0.1.0.0
+version:             0.1.1.0
 -- synopsis:            
 description:         Wai handler to run wai applications in a embedded jetty server
 -- license:             
@@ -14,7 +14,7 @@ cabal-version:       >=1.10
 source-repository this
   type:              git
   location:          https://github.com/jneira/wai-servlet-handler-jetty 
-  tag:               0.1.0.0 
+  tag:               0.1.1.0 
                      
 library
   exposed-modules:     Network.Wai.Servlet.Handler.Jetty
@@ -34,7 +34,7 @@ executable wai-servlet-jetty-example
   -- other-extensions:    		
   build-depends:       base >=4.8 && <4.9		
                      , wai-servlet-handler-jetty
-                     , wai-servlet		
+                     , wai-servlet >= 0.1.3		
                      , wai		
   hs-source-dirs:      examples		
   default-language:    Haskell2010		
