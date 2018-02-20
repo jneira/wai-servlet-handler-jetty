@@ -41,13 +41,12 @@ executable wai-servlet-jetty-example
   ghc-options:         "-threaded"
 
 test-suite spec
-  main-Is:         Spec.hs
+  main-is:         Spec.hs
   other-modules:   FooSpec
-  hs-Source-Dirs:  test, .
+  hs-source-dirs:  test, .
   type:            exitcode-stdio-1.0
-
-  ghc-Options:     -Wall
-  build-Depends:   base >= 4.8 && < 5
+  ghc-options:     -Wall
+  build-depends:   base >= 4.8 && < 5
                  , HUnit
                  , QuickCheck
                  , hspec 
