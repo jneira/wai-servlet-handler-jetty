@@ -7,14 +7,14 @@ jobs:
     - checkout
 
     - restore_cache:
-        key: etlas-v1200-cache-
+        key: etlas-v1300-cache-
 
     - run: etlas update
 
     - run: etlas install
 
     - save_cache:
-        key: etlas-v1200-cache-{{ epoch }}
+        key: etlas-v1300-cache-{{ epoch }}
         paths:
           - "~/.etlas/config"
           - "~/.etlas/packages"
