@@ -5,8 +5,8 @@ module Network.Wai.Servlet.Handler.Jetty
    ( Options(), defaultOptions, runJetty, run ) where
 import qualified Network.Wai          as Wai     
 import           Network.Wai.Servlet
-import           Data.Maybe (fromMaybe, isJust)
-import           Control.Monad (when)
+import           Data.Maybe ( fromMaybe, isJust)
+import           Control.Monad ( when )
 import           Java
 
 data {-# CLASS "org.eclipse.jetty.util.component.LifeCycle" #-}
@@ -14,6 +14,9 @@ data {-# CLASS "org.eclipse.jetty.util.component.LifeCycle" #-}
   deriving Class
 
 foreign import java unsafe "@interface" start ::
+  (a <: LifeCycle) => Java a ()
+
+foreign import java unsafe "@interface" stop ::
   (a <: LifeCycle) => Java a ()
 
 data {-# CLASS "org.eclipse.jetty.server.Handler" #-}
@@ -161,17 +164,15 @@ createServer opts = do
   s <.> (addConnector conn)
   return s
 
-runJetty :: Options -> Wai.Application -> IO ()
-runJetty opts app = java $ do
+runJetty :: Options -> Wai.Application -> Java a Server
+runJetty opts app = do
   serv <- createServer opts
   doto serv [setHandler $ makeHandler app, start]
-  return ()
+  return serv
 
-run :: Int -> Wai.Application -> IO()
+run :: Int -> Wai.Application -> IO ()
 run port' app = do
   let opts = defaultOptions { port = port' }
-  runJetty opts app 
+  java $ runJetty opts app
+  return ()
   
-
-
-
