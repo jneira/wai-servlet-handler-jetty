@@ -37,5 +37,4 @@ executable wai-servlet-jetty-example
                      , wai		
   hs-source-dirs:      examples		
   default-language:    Haskell2010		
-  ghc-options:         "-threaded"
   

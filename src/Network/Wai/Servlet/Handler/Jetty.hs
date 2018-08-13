@@ -2,7 +2,7 @@
              FlexibleContexts, TypeOperators,
              MultiParamTypeClasses #-}
 module Network.Wai.Servlet.Handler.Jetty
-   ( Options(), defaultOptions, runJetty, run ) where
+   ( Options(..), defaultOptions, runJetty, run ) where
 import qualified Network.Wai          as Wai     
 import           Network.Wai.Servlet
 import           Data.Maybe ( fromMaybe, isJust)
@@ -134,6 +134,7 @@ foreign import java unsafe "@new" httpConfiguration ::
 
 data Options = Options { host :: Maybe String , port :: Int
                        , idleTimeout :: Int }
+               deriving (Show, Eq)
 
 defaultOptions = Options { host = Nothing , port = 3000
                          , idleTimeout = 200000 }
