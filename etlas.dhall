@@ -1,51 +1,47 @@
-    let prelude = https://raw.githubusercontent.com/eta-lang/dhall-to-etlas/master/dhall/prelude.dhall
+let prelude =
+      https://raw.githubusercontent.com/eta-lang/dhall-to-etlas/master/dhall/prelude.dhall
 
-in  let types = https://raw.githubusercontent.com/eta-lang/dhall-to-etlas/master/dhall/types.dhall
+let types =
+      https://raw.githubusercontent.com/eta-lang/dhall-to-etlas/master/dhall/types.dhall
 
-in  let v = prelude.v
+let v = prelude.v
 
-in  let defaultLang =
-          [ prelude.types.Languages.Haskell2010 {=} ] : Optional types.Language
+let defaultLang = Some (types.Language.Haskell2010 {=})
 
-in  let pkg =
-            λ(name : Text)
-          → λ(version-range : types.VersionRange)
-          → { bounds = version-range, package = name }
+let pkg =
+        λ(name : Text)
+      → λ(version-range : types.VersionRange)
+      → { bounds = version-range, package = name }
 
-in  let pkgAnyVer = λ(packageName : Text) → pkg packageName prelude.anyVersion
+let pkgAnyVer = λ(packageName : Text) → pkg packageName prelude.anyVersion
 
-in  let commonDeps =
-          [ pkg
-            "base"
-            ( prelude.intersectVersionRanges
-              (prelude.orLaterVersion (v "4.8"))
-              (prelude.earlierVersion (v "4.9"))
-            )
-          , pkgAnyVer "wai"
-          , pkg "wai-servlet" (prelude.orLaterVersion (v "0.1.5"))
-          ]
+let commonDeps =
+      [ pkg
+        "base"
+        ( prelude.intersectVersionRanges
+          (prelude.orLaterVersion (v "4.8"))
+          (prelude.earlierVersion (v "4.9"))
+        )
+      , pkgAnyVer "wai"
+      , pkg "wai-servlet" (prelude.orLaterVersion (v "0.1.5"))
+      ]
 
-in  let updateRepo =
-          prelude.utils.mapSourceRepos
-          (   λ(srcRepo : types.SourceRepo)
-            →   srcRepo
-              ⫽ { tag =
-                    [ "0.1.2.0" ] : Optional Text
-                , kind =
-                    prelude.types.RepoKind.RepoThis {=}
-                }
-          )
+let updateRepo =
+      prelude.utils.mapSourceRepos
+      (   λ(srcRepo : types.SourceRepo)
+        → srcRepo ⫽ { tag = Some "0.1.2.0", kind = types.RepoKind.RepoThis {=} }
+      )
 
-in  let project =
-          prelude.utils.GitHub-project
-          { owner = "jneira", repo = "wai-servlet-handler-jetty" }
+let project =
+      prelude.utils.GitHub-project
+      { owner = "jneira", repo = "wai-servlet-handler-jetty" }
 
 in  updateRepo
     (   project
       ⫽ { description =
             "Wai handler to run wai applications in a embedded jetty server"
         , license =
-            prelude.types.Licenses.BSD3 {=}
+            types.License.BSD3 {=}
         , license-files =
             [ "LICENSE" ]
         , author =
