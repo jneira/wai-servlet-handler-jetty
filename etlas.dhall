@@ -6,8 +6,6 @@ let types =
 
 let v = prelude.v
 
-let defaultLang = Some (types.Language.Haskell2010 {=})
-
 let pkg =
         λ(name : Text)
       → λ(version-range : types.VersionRange)
@@ -29,7 +27,7 @@ let commonDeps =
 let updateRepo =
       prelude.utils.mapSourceRepos
       (   λ(srcRepo : types.SourceRepo)
-        → srcRepo ⫽ { tag = Some "0.1.2.0", kind = types.RepoKind.RepoThis {=} }
+        → srcRepo ⫽ { tag = Some "0.1.2.0", kind = types.RepoKind.RepoThis }
       )
 
 let project =
@@ -41,7 +39,7 @@ in  updateRepo
       ⫽ { description =
             "Wai handler to run wai applications in a embedded jetty server"
         , license =
-            types.License.BSD3 {=}
+            types.License.BSD3
         , license-files =
             [ "LICENSE" ]
         , author =
@@ -65,8 +63,6 @@ in  updateRepo
                     [ "Network.Wai.Servlet.Handler.Jetty" ]
                 , hs-source-dirs =
                     [ "src" ]
-                , default-language =
-                    defaultLang
                 , build-depends =
                     commonDeps
                 , maven-depends =
@@ -85,8 +81,6 @@ in  updateRepo
                       [ "examples" ]
                   , main-is =
                       "Main.hs"
-                  , default-language =
-                      defaultLang
                   }
               )
             ]
